@@ -613,6 +613,11 @@ static inline int start_streaming(struct msm_vidc_inst *inst)
 	unsigned long flags;
 	struct vb2_buf_entry *temp;
 	struct list_head *ptr, *next;
+	rc = msm_comm_try_get_bufreqs(inst);
+	if (rc) {
+		pr_err("Failed to get Buffer Requirements : %d\n", rc);
+		goto fail_start;
+	}
 	rc = msm_comm_set_scratch_buffers(inst);
 	if (rc) {
 		pr_err("Failed to set scratch buffers: %d\n", rc);
@@ -744,7 +749,12 @@ static int msm_venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
 	void *pdata;
 	struct msm_vidc_inst *inst = container_of(ctrl->handler,
 					struct msm_vidc_inst, ctrl_handler);
-
+	rc = msm_comm_try_state(inst, MSM_VIDC_OPEN_DONE);
+	if (rc) {
+		pr_err("Failed to move inst: %p to start done state\n",
+				inst);
+		goto failed_open_done;
+	}
 	control.id = ctrl->id;
 	control.value = ctrl->val;
 
@@ -1164,6 +1174,7 @@ static int msm_venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
 	}
 	if (rc)
 		pr_err("Failed to set hal property for framesize\n");
+failed_open_done:
 	return rc;
 }
 static int msm_venc_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
