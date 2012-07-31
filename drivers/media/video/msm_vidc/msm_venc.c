@@ -1266,6 +1266,7 @@ int msm_venc_s_fmt(struct msm_vidc_inst *inst, struct v4l2_format *f)
 	}
 
 	if (fmt) {
+		f->fmt.pix_mp.num_planes = fmt->num_planes;
 		for (i = 0; i < fmt->num_planes; ++i) {
 			f->fmt.pix_mp.plane_fmt[i].sizeimage =
 				fmt->get_frame_size(i, f->fmt.pix_mp.height,
@@ -1306,6 +1307,7 @@ int msm_venc_g_fmt(struct msm_vidc_inst *inst, struct v4l2_format *f)
 		f->fmt.pix_mp.pixelformat = fmt->fourcc;
 		f->fmt.pix_mp.height = inst->prop.height;
 		f->fmt.pix_mp.width = inst->prop.width;
+		f->fmt.pix_mp.num_planes = fmt->num_planes;
 		for (i = 0; i < fmt->num_planes; ++i) {
 			f->fmt.pix_mp.plane_fmt[i].sizeimage =
 			fmt->get_frame_size(i, inst->prop.height,
