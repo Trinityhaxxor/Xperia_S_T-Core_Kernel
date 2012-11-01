@@ -176,7 +176,6 @@ static inline struct device *msm_iommu_get_ctx(const char *ctx_name)
 }
 #endif
 
-#endif
 
 static inline int msm_soc_version_supports_iommu_v1(void)
 {
@@ -200,3 +199,4 @@ static inline int msm_soc_version_supports_iommu_v1(void)
 	}
 	return 1;
 }
+#endif
