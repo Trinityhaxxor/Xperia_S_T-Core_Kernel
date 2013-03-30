@@ -62,9 +62,6 @@ static long ratelimit_pages = 32;
 
 /* The following parameters are exported via /proc/sys/vm */
 
-/*
- * Start background writeback (via writeback threads) at this percentage
- */
 int dirty_background_ratio = 5;
 
 /*
@@ -79,10 +76,7 @@ unsigned long dirty_background_bytes;
  */
 int vm_highmem_is_dirtyable;
 
-/*
- * The generator of dirty data starts writeback at this percentage
- */
-int vm_dirty_ratio = 10;
+int vm_dirty_ratio = 5;
 
 /*
  * vm_dirty_bytes starts at 0 (disabled) so that it is a function of
@@ -90,17 +84,11 @@ int vm_dirty_ratio = 10;
  */
 unsigned long vm_dirty_bytes;
 
-/*
- * The interval between `kupdate'-style writebacks
- */
-unsigned int dirty_writeback_interval = 3 * 100; /* centiseconds */
+unsigned int dirty_writeback_interval = 3 * 100; 
 
 EXPORT_SYMBOL_GPL(dirty_writeback_interval);
 
-/*
- * The longest time for which data is allowed to remain dirty
- */
-unsigned int dirty_expire_interval = 35 * 100; /* centiseconds */
+unsigned int dirty_expire_interval = 50; /* centiseconds */
 
 /*
  * Flag that makes the machine dump writes/reads and block dirtyings.
