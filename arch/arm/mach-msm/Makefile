@@ -48,7 +48,7 @@ ifdef CONFIG_ARCH_MSM8625
 else
 	obj-$(CONFIG_SMP) += platsmp.o
 endif
-obj-$(CONFIG_HOTPLUG_CPU) += hotplug.o
+obj-$(CONFIG_HOTPLUG_CPU) += hotplug.o dyn_hotplug.o
 
 ifdef CONFIG_ARCH_MSM8X60
 	obj-$(CONFIG_SIMPLE_REMOTE_PLATFORM) += simple_remote_msm8x60_pf.o
