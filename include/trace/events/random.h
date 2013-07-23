@@ -83,7 +83,7 @@ TRACE_EVENT(get_random_bytes,
 		__entry->IP		= IP;
 	),
 
-	TP_printk("nbytes %d caller %pF", __entry->nbytes, (void )__entry->IP)
+	TP_printk("nbytes %d caller %pF", __entry->nbytes, (void *)__entry->IP)
 );
 
 DECLARE_EVENT_CLASS(random__extract_entropy,
@@ -107,7 +107,7 @@ DECLARE_EVENT_CLASS(random__extract_entropy,
 	),
 
 	TP_printk("%s pool: nbytes %d entropy_count %d caller %pF",
-		  __entry->pool_name, __entry->nbytes, __entry-entropy_count,
+		  __entry->pool_name, __entry->nbytes, __entry->entropy_count,
 		  (void *)__entry->IP)
 );
 
@@ -132,3 +132,4 @@ DEFINE_EVENT(random__extract_entropy, extract_entropy_user,
 
 /* This part must be outside protection */
 #include <trace/define_trace.h>
+
