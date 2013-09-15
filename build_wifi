@@ -1,0 +1,5 @@
+cd ../vendor/broadcom/wlan/dhd/linux
+ARCH=arm CROSS_COMPILE=~/Linaro/bin/arm-cortex_a8-linux-gnueabi- LINUXDIR=~/Kernel LINUXVER=3.4.20 make
+cp ~/Kernel/vendor/broadcom/wlan/dhd/linux/dhd-android/bcm4330.ko ~/Kernel/final_files/.
+cp ~/kernel/vendor/broadcom/wlan/dhd/linux/dhd-android/bcm4330.ko.stripped ~/Kernel/android_kernel_sony_msm8660/final_files/.
+ARCH=arm CROSS_COMPILE=~/Linaro/bin/arm-cortex_a8-linux-gnueabi- make clean
