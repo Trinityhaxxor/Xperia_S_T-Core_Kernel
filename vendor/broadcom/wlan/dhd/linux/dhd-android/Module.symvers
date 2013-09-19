@@ -1,0 +1,2 @@
+0xa490bc5e	bcmsdh_remove	/home/trinityhaxxorx/Kernel/vendor/broadcom/wlan/dhd/linux/dhd-android/bcm4330	EXPORT_SYMBOL
+0x88de8c1f	bcmsdh_probe	/home/trinityhaxxorx/Kernel/vendor/broadcom/wlan/dhd/linux/dhd-android/bcm4330	EXPORT_SYMBOL
