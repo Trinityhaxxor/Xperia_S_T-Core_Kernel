@@ -715,6 +715,12 @@ CONFIG_CRASH_NOTES=y
 # CPU Power Management
 #
 
+
+#
+#GPU Optimization
+#
+CONFIG_MSM_KGSL_SIMPLE_GOV=y 
+
 #
 # CPU Frequency scaling
 #
