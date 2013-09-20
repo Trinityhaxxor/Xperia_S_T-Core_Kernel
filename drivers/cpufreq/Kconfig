@@ -47,6 +47,10 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVEX
     bool "interactiveX"
     select CPU_FREQ_GOV_INTERACTIVEX
 
+config CPU_FREQ_DEFAULT_GOV_SAVAGEDZEN
+    bool "SavagedZen"
+    select CPU_FREQ_GOV_SAVAGEDZEN
+
 config CPU_FREQ_DEFAULT_GOV_BADASS
 	bool "badass"
 	select CPU_FREQ_GOV_BADASS
@@ -277,6 +281,10 @@ config CPU_FREQ_GOV_POWERSAVE
 config CPU_FREQ_GOV_WHEATLEY
 	tristate "'wheatley' cpufreq governor"
 	depends on CPU_FREQ
+
+config CPU_FREQ_GOV_SAVAGEDZEN
+    tristate "'savagedzen' cpufreq governor"
+    depends on CPU_FREQ
 
 config CPU_FREQ_GOV_USERSPACE
 	tristate "'userspace' governor for userspace frequency scaling"
