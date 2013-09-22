@@ -11,8 +11,8 @@ obj-y				+= gpio/
 obj-$(CONFIG_PCI)		+= pci/
 obj-$(CONFIG_PARISC)		+= parisc/
 obj-$(CONFIG_RAPIDIO)		+= rapidio/
-obj-y				+= leds/
 obj-y				+= video/
+obj-y				+= leds/
 obj-y				+= idle/
 obj-$(CONFIG_ACPI)		+= acpi/
 obj-$(CONFIG_SFI)		+= sfi/
@@ -141,4 +141,7 @@ obj-$(CONFIG_PM_DEVFREQ)	+= devfreq/
 #MobiCore
 obj-$(CONFIG_MOBICORE_SUPPORT)  += gud/
 
-obj-$(CONFIG_MSM_QDSS)		+= coresight/
+obj-$(CONFIG_CORESIGHT)		+= coresight/
+
+#exFAT
+obj-y				+= exfat/
