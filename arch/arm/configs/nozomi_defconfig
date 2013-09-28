@@ -720,7 +720,8 @@ CONFIG_CRASH_NOTES=y
 #
 # Optimization Area
 #
-config ZRAM_FOR_ANDROID=y
+CONFIG_ZRAM_FOR_ANDROID=y
+CONFIG_LGIT_VIDEO_WXGA_CABC=y
 
 #
 #GPU Optimization
@@ -797,6 +798,7 @@ CONFIG_CPU_FREQ_MSM=y
 CONFIG_VFP=y
 CONFIG_VFPv3=y
 CONFIG_NEON=y
+CONFIG_VFPV3=y
 
 #
 # Userspace binary formats
