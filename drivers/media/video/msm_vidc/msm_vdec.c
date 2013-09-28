@@ -22,7 +22,7 @@
 #define MAX_PLANES 1
 #define DEFAULT_HEIGHT 720
 #define DEFAULT_WIDTH 1280
-#define MIN_NUM_OUTPUT_BUFFERS 2
+#define MIN_NUM_OUTPUT_BUFFERS 4
 #define MAX_NUM_OUTPUT_BUFFERS 6
 
 static const char *const mpeg_video_vidc_divx_format[] = {
