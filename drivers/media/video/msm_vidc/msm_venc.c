@@ -1251,7 +1251,7 @@ int msm_venc_dqbuf(struct msm_vidc_inst *inst, struct v4l2_buffer *b)
 	}
 	rc = vb2_dqbuf(q, b, true);
 	if (rc)
-		dprintk(VIDC_DBG, "Failed to dqbuf, %d\n", rc);
+		pr_err("Failed to dqbuf, %d\n", rc);
 	return rc;
 }
 
