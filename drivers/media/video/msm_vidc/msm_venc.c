@@ -20,7 +20,7 @@
 #define MSM_VENC_DVC_NAME "msm_venc_8974"
 #define DEFAULT_HEIGHT 720
 #define DEFAULT_WIDTH 1280
-#define MIN_NUM_OUTPUT_BUFFERS 2
+#define MIN_NUM_OUTPUT_BUFFERS 6
 #define MAX_NUM_OUTPUT_BUFFERS 8
 #define MIN_BIT_RATE 64
 #define MAX_BIT_RATE 20000
@@ -1251,7 +1251,7 @@ int msm_venc_dqbuf(struct msm_vidc_inst *inst, struct v4l2_buffer *b)
 	}
 	rc = vb2_dqbuf(q, b, true);
 	if (rc)
-		pr_err("Failed to dqbuf, %d\n", rc);
+		dprintk(VIDC_DBG, "Failed to dqbuf, %d\n", rc);
 	return rc;
 }
 
