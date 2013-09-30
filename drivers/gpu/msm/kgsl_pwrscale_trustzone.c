@@ -25,29 +25,20 @@
 
 #ifdef CONFIG_MSM_KGSL_SIMPLE_GOV
 #include <linux/module.h>
-#endif 
+#endif
 #define TZ_GOVERNOR_PERFORMANCE 0
 #define TZ_GOVERNOR_ONDEMAND    1
 #ifdef CONFIG_MSM_KGSL_SIMPLE_GOV
-#define TZ_GOVERNOR_SIMPLE  2
-#endif 
+#define TZ_GOVERNOR_SIMPLE	2
+#endif
 
 struct tz_priv {
 	int governor;
 	unsigned int no_switch_cnt;
 	unsigned int skip_cnt;
-	struct kgsl_power_stats bin;
 };
 spinlock_t tz_lock;
 
-/* FLOOR is 5msec to capture up to 3 re-draws
- * per frame for 60fps content.
- */
-#define FLOOR			5000
-/* CEILING is 50msec, larger than any standard
- * frame length, but less than the idle timer.
- */
-#define CEILING			50000
 #define SWITCH_OFF		200
 #define SWITCH_OFF_RESET_TH	40
 #define SKIP_COUNTER		500
@@ -82,9 +73,9 @@ static ssize_t tz_governor_show(struct kgsl_device *device,
 	if (priv->governor == TZ_GOVERNOR_ONDEMAND)
 		ret = snprintf(buf, 10, "ondemand\n");
 #ifdef CONFIG_MSM_KGSL_SIMPLE_GOV
-      else if (priv->governor == TZ_GOVERNOR_SIMPLE)
-        ret = snprintf(buf, 8, "simple\n");
-#endif 
+	else if (priv->governor == TZ_GOVERNOR_SIMPLE)
+		ret = snprintf(buf, 8, "simple\n");
+#endif
 	else
 		ret = snprintf(buf, 13, "performance\n");
 
@@ -105,7 +96,6 @@ static ssize_t tz_governor_store(struct kgsl_device *device,
 		return -EINVAL;
 
 	mutex_lock(&device->mutex);
-
 
 	if (!strncmp(str, "ondemand", 8))
 		priv->governor = TZ_GOVERNOR_ONDEMAND;
@@ -201,18 +191,12 @@ static void tz_idle(struct kgsl_device *device, struct kgsl_pwrscale *pwrscale)
 
 	/* In "performance" mode the clock speed always stays
 	   the same */
+
 	if (priv->governor == TZ_GOVERNOR_PERFORMANCE)
 		return;
 
 	device->ftbl->power_stats(device, &stats);
-	priv->bin.total_time += stats.total_time;
-	priv->bin.busy_time += stats.busy_time;
-	/* Do not waste CPU cycles running this algorithm if
-	 * the GPU just started, or if less than FLOOR time
-	 * has passed since the last run.
-	 */
-	if ((stats.total_time == 0) ||
-		(priv->bin.total_time < FLOOR))
+	if (stats.total_time == 0)
 		return;
 
 	/* If the GPU has stayed in turbo mode for a while, *
@@ -231,31 +215,22 @@ static void tz_idle(struct kgsl_device *device, struct kgsl_pwrscale *pwrscale)
 		priv->no_switch_cnt = 0;
 	}
 
-	/* If there is an extended block of busy processing,
-	 * increase frequency.  Otherwise run the normal algorithm.
-	 */
-	if (priv->bin.busy_time > CEILING) {
-		val = -1;
-	} else {
-		idle = priv->bin.total_time - priv->bin.busy_time;
-		idle = (idle > 0) ? idle : 0;
+	idle = stats.total_time - stats.busy_time;
+	idle = (idle > 0) ? idle : 0;
 #ifdef CONFIG_MSM_KGSL_SIMPLE_GOV
-    if (priv->governor == TZ_GOVERNOR_SIMPLE)
-        val = simple_governor(device, idle);
-      else
-        val = __secure_tz_entry(TZ_UPDATE_ID, idle, device->id);
-#else 
+	if (priv->governor == TZ_GOVERNOR_SIMPLE)
+		val = simple_governor(device, idle);
+	else
 		val = __secure_tz_entry(TZ_UPDATE_ID, idle, device->id);
-	}
-	priv->bin.total_time = 0;
-	priv->bin.busy_time = 0;
+#else
+	val = __secure_tz_entry(TZ_UPDATE_ID, idle, device->id);
 #endif
-	if (val)
+	if (val) {
 		kgsl_pwrctrl_pwrlevel_change(device,
 					     pwr->active_pwrlevel + val);
-	 //pr_info("TZ idle stat: %d, TZ PL: %d, TZ out: %d\n",
-    //    idle, pwr->active_pwrlevel, val); 
-} 
+		//pr_info("TZ idle stat: %d, TZ PL: %d, TZ out: %d\n",
+		//		idle, pwr->active_pwrlevel, val);
+}
 }
 
 static void tz_busy(struct kgsl_device *device,
@@ -271,8 +246,6 @@ static void tz_sleep(struct kgsl_device *device,
 
 	__secure_tz_entry(TZ_RESET_ID, 0, device->id);
 	priv->no_switch_cnt = 0;
-	priv->bin.total_time = 0;
-	priv->bin.busy_time = 0;
 }
 
 static int tz_init(struct kgsl_device *device, struct kgsl_pwrscale *pwrscale)
