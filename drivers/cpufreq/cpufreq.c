@@ -407,7 +407,7 @@ static ssize_t show_##file_name				\
 }
 
 show_one(cpuinfo_min_freq, cpuinfo.min_freq);
-show_one(cpuinfo_max_freq, cpuinfo.max_freq);
+show_one(cpuinfo_max_freq, max);
 show_one(cpuinfo_transition_latency, cpuinfo.transition_latency);
 show_one(scaling_min_freq, min);
 show_one(scaling_max_freq, max);
@@ -826,8 +826,19 @@ static int cpufreq_add_dev_policy(unsigned int cpu,
 #ifdef CONFIG_SMP
 	unsigned long flags;
 	unsigned int j;
+/*
 #ifdef CONFIG_HOTPLUG_CPU
 	struct cpufreq_governor *gov;
+
+	if(cpu >=1){
+		cpufreq_policy_save.max = per_cpu(cpufreq_cpu_data,0)->max;  
+		cpufreq_policy_save.min = per_cpu(cpufreq_cpu_data,0)->min;
+		policy->min = cpufreq_policy_save.min;
+		policy->user_policy.min = policy->min;
+		policy->max = cpufreq_policy_save.max;
+		policy->user_policy.max = policy->max;
+		goto jump_out;
+	}
 
 	gov = __find_governor(per_cpu(cpufreq_policy_save, cpu).gov);
 	if (gov) {
@@ -843,10 +854,13 @@ static int cpufreq_add_dev_policy(unsigned int cpu,
 		policy->max = per_cpu(cpufreq_policy_save, cpu).max;
 		policy->user_policy.max = policy->max;
 	}
+
+	jump_out:
 	pr_debug("Restoring CPU%d min %d and max %d\n",
 		cpu, policy->min, policy->max);
 #endif
 
+*/
 	for_each_cpu(j, policy->cpus) {
 		struct cpufreq_policy *managed_policy;
 
@@ -1025,6 +1039,7 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 	unsigned long flags;
 	unsigned int j;
 #ifdef CONFIG_HOTPLUG_CPU
+	struct cpufreq_policy *cp;
 	int sibling;
 #endif
 
@@ -1073,17 +1088,23 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 	/* Set governor before ->init, so that driver could check it */
 #ifdef CONFIG_HOTPLUG_CPU
 	for_each_online_cpu(sibling) {
-		struct cpufreq_policy *cp = per_cpu(cpufreq_cpu_data, sibling);
+		cp = per_cpu(cpufreq_cpu_data, sibling);
 		if (cp && cp->governor &&
-		    (cpumask_test_cpu(cpu, cp->related_cpus))) {
+         	(cpumask_test_cpu(cpu, cp->related_cpus))) {
 			policy->governor = cp->governor;
+			policy->min = cp->min;
+			policy->max = cp->max;
+			policy->user_policy.min = cp->user_policy.min;
+			policy->user_policy.max = cp->user_policy.max;
 			found = 1;
+			//pr_info("sibling: found sibling!\n");
 			break;
 		}
 	}
 #endif
 	if (!found)
 		policy->governor = CPUFREQ_DEFAULT_GOVERNOR;
+
 	/* call driver. From then on the cpufreq must be able
 	 * to accept all calls to ->verify and ->setpolicy for this CPU
 	 */
@@ -1094,6 +1115,15 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 	}
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
+
+	if (policy->cpu >=1) {
+	    cp = per_cpu(cpufreq_cpu_data, 0);
+	    policy->governor = cp->governor;
+	    policy->min = cp->min;
+	    policy->max = cp->max;
+	    policy->user_policy.min = cp->user_policy.min;
+	    policy->user_policy.max = cp->user_policy.max;
+	}
 
 	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
 				     CPUFREQ_START, policy);
@@ -1801,6 +1831,17 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 				struct cpufreq_policy *policy)
 {
 	int ret = 0;
+
+	struct cpufreq_policy *cpu0_policy;
+	if(data->cpu >= 1){
+		pr_debug("forcing cpu0 policy on cpu\n");
+		cpu0_policy = cpufreq_cpu_get(0); // force cpu1 to follow policy of cpu0
+		policy->min = cpu0_policy->min;
+		policy->max = cpu0_policy->max;
+		if(cpu0_policy->user_policy.governor){
+			policy->governor = cpu0_policy->user_policy.governor;
+		}  
+	}
 
 	pr_debug("setting new policy for CPU %u: %u - %u kHz\n", policy->cpu,
 		policy->min, policy->max);
