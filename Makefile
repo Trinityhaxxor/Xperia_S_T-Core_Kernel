@@ -375,6 +375,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Wno-maybe-uninitialized \
 		   -Wno-unused-variable \
 		   -Wno-parentheses \
+		   -Wno-unused-function \
 		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL := -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -marm -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -funswitch-loops --param l2-cache-size=512 -mvectorize-with-neon-quad -mcpu=cortex-a8
 KBUILD_CFLAGS_KERNEL := -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -marm -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -funswitch-loops --param l2-cache-size=512 -mvectorize-with-neon-quad -mcpu=cortex-a8 
