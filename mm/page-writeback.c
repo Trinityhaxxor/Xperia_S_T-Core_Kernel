@@ -62,7 +62,7 @@ static long ratelimit_pages = 32;
 
 /* The following parameters are exported via /proc/sys/vm */
 
-int dirty_background_ratio = 5;
+int dirty_background_ratio = 1;
 
 /*
  * dirty_background_bytes starts at 0 (disabled) so that it is a function of
